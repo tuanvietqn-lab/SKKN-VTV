@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thư viện Học liệu Số Toán THPT | Gemini AI – Manim – LaTeX</title>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --purple: #6d28d9;
+      --purple-soft: #f5f3ff;
+      --emerald: #047857;
+      --emerald-soft: #ecfdf5;
+      --slate-900: #0f172a;
+      --slate-700: #334155;
+      --slate-500: #64748b;
+      --slate-200: #e2e8f0;
+      --bg: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--slate-900);
+      line-height: 1.55;
+    }
+
+    /* Banner đầu trang */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: #ffffff;
+      padding: 40px 20px 36px;
+      text-align: center;
+    }
+
+    .hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.5rem, 3.2vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+
+    .hero p {
+      color: #cbd5e1;
+      font-size: 0.98rem;
+      max-width: 680px;
+      margin: 0 auto 18px;
+    }
+
+    .author-meta {
+      font-size: 0.88rem;
+      color: #93c5fd;
+      font-weight: 500;
+    }
+
+    /* Thanh lọc */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 18px 48px;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--slate-200);
+      background: #ffffff;
+      color: var(--slate-700);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(30, 64, 175, 0.25);
+    }
+
+    /* Lưới thẻ học liệu */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .card-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .badge-grade {
+      background: #f1f5f9;
+      color: var(--slate-700);
+    }
+
+    .badge-web {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .badge-manim {
+      background: var(--purple-soft);
+      color: var(--purple);
+    }
+
+    .badge-latex {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+    }
+
+    .card h2 {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: var(--slate-500);
+      margin-bottom: 18px;
+    }
+
+    .card-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.15s ease;
+    }
+
+    .btn-web {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-web:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-manim {
+      background: var(--purple);
+      color: #ffffff;
+    }
+    .btn-manim:hover {
+      background: #5b21b6;
+    }
+
+    .btn-latex {
+      background: var(--emerald);
+      color: #ffffff;
+    }
+    .btn-latex:hover {
+      background: #065f46;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 16px;
+      border-top: 1px solid var(--slate-200);
+      color: var(--slate-500);
+      font-size: 0.85rem;
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">PHỤ LỤC SỐ — SÁNG KIẾN KINH NGHIỆM MÔN TOÁN THPT</div>
+      <h1>Thư viện Học liệu Trực quan Toán học</h1>
+      <p>
+        Tổng hợp các mô phỏng tương tác Web (HTML + KaTeX), video hoạt họa Manim và phiếu học tập LaTeX được xây dựng với sự hỗ trợ của Gemini AI.
+      </p>
+      <!-- Sửa tên tác giả và trường của bạn tại dòng dưới -->
+      <div class="author-meta">Tác giả: [Họ và tên Giáo viên] &nbsp;•&nbsp; Trường THPT [Tên Trường]</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Bộ lọc -->
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-filter="all">Tất cả học liệu</button>
+      <button class="filter-btn" data-filter="12">Toán 12</button>
+      <button class="filter-btn" data-filter="11">Toán 11</button>
+      <button class="filter-btn" data-filter="web">Mô phỏng Web</button>
+      <button class="filter-btn" data-filter="manim">Video Manim</button>
+      <button class="filter-btn" data-filter="latex">Phiếu LaTeX</button>
+    </div>
+
+    <!-- Khu vực hiển thị danh sách -->
+    <div class="grid" id="resourceGrid"></div>
+  </main>
+
+  <footer>
+    Học liệu phục vụ giảng dạy môn Toán theo Chương trình GDPT 2018 &nbsp;|&nbsp; Lưu trữ trên GitHub Pages
+  </footer>
+
+  <script>
+    /* =====================================================================
+       KHU VỰC CHỈNH SỬA DANH SÁCH HỌC LIỆU CỦA BẠN
+       - grade: "10", "11", hoặc "12"
+       - type: "web" (Mô phỏng HTML), "manim" (Video YouTube/Drive), "latex" (File PDF)
+       - url: tên file cùng thư mục (vd: "mo-phong-ham-bac-ba.html") hoặc link YouTube/Drive
+       ===================================================================== */
+    const hocLieu = [
+      {
+        title: "Khảo sát Sự biến thiên & Cực trị Hàm bậc ba",
+        desc: "Kéo thanh trượt tham số m để quan sát đồ thị, tiếp tuyến nằm ngang, quỹ tích cực trị và công thức đạo hàm cập nhật bằng KaTeX.",
+        grade: "12",
+        type: "web",
+        url: "mo-phong-ham-bac-ba.html",
+        newTab: false
+      },
+      {
+        title: "Hoạt họa 3D: Góc nhị diện và Góc phẳng nhị diện",
+        desc: "Video dựng bằng Manim minh họa quá trình mở/đóng hai nửa mặt phẳng và chứng minh trực quan góc phẳng nhị diện không phụ thuộc vị trí điểm trên cạnh.",
+        grade: "11",
+        type: "manim",
+        url: "https://www.youtube.com/", // Thay bằng link video YouTube của bạn
+        newTab: true
+      },
+      {
+        title: "Ý nghĩa hình học của Tích phân (Tổng Riemann)",
+        desc: "Video hoạt họa Manim minh họa quá trình chia nhỏ hình thang cong thành n hình chữ nhật khi n tiến ra vô cực.",
+        grade: "12",
+        type: "manim",
+        url: "https://www.youtube.com/", // Thay bằng link video YouTube của bạn
+        newTab: true
+      },
+      {
+        title: "Phiếu học tập số 01: Cực trị hàm chứa tham số",
+        desc: "Tài liệu biên soạn bằng LaTeX + TikZ đồng bộ góc nhìn với ứng dụng mô phỏng, dùng cho hoạt động nhóm tại lớp thực nghiệm.",
+        grade: "12",
+        type: "latex",
+        url: "phieu-hoc-tap-01.pdf", // Tải file PDF lên cùng kho GitHub
+        newTab: true
+      }
+    ];
+
+    const typeMeta = {
+      web: { label: "Mô phỏng Web", badgeClass: "badge-web", btnClass: "btn-web", action: "Mở mô phỏng →" },
+      manim: { label: "Video Manim", badgeClass: "badge-manim", btnClass: "btn-manim", action: "Xem video →" },
+      latex: { label: "Phiếu LaTeX (PDF)", badgeClass: "badge-latex", btnClass: "btn-latex", action: "Xem / Tải phiếu →" }
+    };
+
+    const grid = document.getElementById("resourceGrid");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    function renderCards(filter) {
+      const filtered = hocLieu.filter((item) => {
+        if (filter === "all") return true;
+        return item.grade === filter || item.type === filter;
+      });
+
+      grid.innerHTML = filtered
+        .map((item) => {
+          const meta = typeMeta[item.type];
+          const targetAttr = item.newTab ? 'target="_blank" rel="noopener noreferrer"' : "";
+          return `
+            <article class="card">
+              <div>
+                <div class="card-badges">
+                  <span class="badge badge-grade">Lớp ${item.grade}</span>
+                  <span class="badge ${meta.badgeClass}">${meta.label}</span>
+                </div>
+                <h2>${item.title}</h2>
+                <p>${item.desc}</p>
+              </div>
+              <a class="card-action ${meta.btnClass}" href="${item.url}" ${targetAttr}>
+                ${meta.action}
+              </a>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderCards(btn.dataset.filter);
+      });
+    });
+
+    renderCards("all");
+  </script>
+</body>
+</html>
