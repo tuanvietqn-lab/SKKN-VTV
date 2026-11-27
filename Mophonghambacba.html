@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mô phỏng Đồ thị Hàm số Bậc ba chứa tham số m</title>
+  <!-- Thư viện KaTeX hiển thị công thức Toán học sắc nét -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <style>
+    :root {
+      --primary: #1d4ed8;
+      --primary-light: #eff6ff;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --green: #059669;
+      --green-bg: #ecfdf5;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --slate-900: #0f172a;
+      --slate-700: #334155;
+      --slate-500: #64748b;
+      --slate-200: #e2e8f0;
+      --bg: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--slate-900);
+      line-height: 1.5;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 16px 22px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      color: var(--slate-500);
+    }
+
+    .badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3.4;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--slate-700);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--slate-200);
+      font-size: 0.9rem;
+    }
+
+    .toggles label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      color: var(--slate-700);
+      font-weight: 500;
+    }
+
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .m-display {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+      height: 8px;
+      cursor: pointer;
+      margin: 8px 0 12px;
+    }
+
+    .preset-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--slate-200);
+      background: #ffffff;
+      color: var(--slate-700);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    button:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    button.active-play {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--slate-500);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .math-box {
+      background: #f8fafc;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      overflow-x: auto;
+    }
+
+    .math-row {
+      margin: 6px 0;
+      font-size: 1.02rem;
+    }
+
+    .extrema-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 500px) {
+      .extrema-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ext-card {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid;
+      font-size: 0.95rem;
+    }
+
+    .ext-max {
+      background: var(--red-bg);
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .ext-min {
+      background: var(--green-bg);
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+
+    .ext-none {
+      grid-column: 1 / -1;
+      background: var(--amber-bg);
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .quiz-item {
+      border-top: 1px solid var(--slate-200);
+      padding-top: 10px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .quiz-item:first-of-type {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .quiz-feedback {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Khảo sát Sự biến thiên &amp; Cực trị Hàm số Bậc ba</h1>
+        <p>Học liệu trực quan tương tác kết hợp Gemini AI &amp; KaTeX — Giải tích lớp 12</p>
+      </div>
+      <div class="badge" id="header-formula">y = x³ - 3mx² + 2</div>
+    </header>
+
+    <div class="main-grid">
+      <!-- CỘT TRÁI: ĐỒ THỊ TRỰC QUAN -->
+      <div class="card">
+        <div class="canvas-wrapper">
+          <canvas id="graphCanvas"></canvas>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <span class="dot" style="background: #1d4ed8;"></span> Đồ thị hàm số (Cₘ)
+          </div>
+          <div class="legend-item">
+            <span class="dot" style="background: #dc2626;"></span> Điểm cực đại (CĐ)
+          </div>
+          <div class="legend-item">
+            <span class="dot" style="background: #059669;"></span> Điểm cực tiểu (CT)
+          </div>
+          <div class="legend-item">
+            <span class="dot" style="background: #d97706;"></span> Điểm uốn (khi m = 0)
+          </div>
+        </div>
+
+        <div class="toggles">
+          <label>
+            <input type="checkbox" id="toggleTangent" checked />
+            Hiện tiếp tuyến nằm ngang tại cực trị (y' = 0)
+          </label>
+          <label>
+            <input type="checkbox" id="toggleLocus" />
+            Hiện quỹ tích điểm cực trị di động
+          </label>
+        </div>
+      </div>
+
+      <!-- CỘT PHẢI: ĐIỀU KHIỂN & CÔNG THỨC LATEX THỜI GIAN THỰC -->
+      <div class="right-panel">
+        <!-- Bảng điều khiển tham số m -->
+        <div class="card">
+          <div class="control-header">
+            <span class="section-title" style="margin:0;">Điều chỉnh tham số m</span>
+            <span class="m-display" id="mValueBadge">m = 1</span>
+          </div>
+          <input type="range" id="mSlider" min="-1.3" max="1.3" step="0.1" value="1" />
+          <div class="preset-group">
+            <button onclick="setM(-1)">m = -1</button>
+            <button onclick="setM(0)">m = 0 (Điểm uốn)</button>
+            <button onclick="setM(1)">m = 1</button>
+            <button id="playBtn" onclick="togglePlay()">▶ Chạy tự động</button>
+          </div>
+        </div>
+
+        <!-- Biểu thức giải tích cập nhật theo thời gian thực -->
+        <div class="card">
+          <div class="section-title">Biểu thức giải tích (Cập nhật trực tiếp)</div>
+          <div class="math-box">
+            <div class="math-row" id="tex-func"></div>
+            <div class="math-row" id="tex-deriv"></div>
+            <div class="math-row" id="tex-roots"></div>
+          </div>
+
+          <div class="section-title" style="margin-top: 12px;">Kết luận Cực trị &amp; Tính đơn điệu</div>
+          <div class="extrema-grid" id="extremaContainer"></div>
+          <div class="math-box" style="margin-top: 8px; margin-bottom: 0;">
+            <div class="math-row" id="tex-monotonic"></div>
+          </div>
+        </div>
+
+        <!-- Phiếu câu hỏi khám phá nhanh cho học sinh -->
+        <div class="card">
+          <div class="section-title">Nhiệm vụ khám phá nhanh (Dành cho học sinh)</div>
+          <div class="quiz-item">
+            <div><strong>Câu 1:</strong> Kéo thanh trượt về <b>m = 0</b>. Khi đó đồ thị có bao nhiêu điểm cực trị?</div>
+            <div class="quiz-options">
+              <button onclick="checkQuiz(1, false)">2 điểm cực trị</button>
+              <button onclick="checkQuiz(1, true)">0 điểm cực trị</button>
+              <button onclick="checkQuiz(1, false)">1 điểm cực trị</button>
+            </div>
+            <div class="quiz-feedback" id="fb-1"></div>
+          </div>
+
+          <div class="quiz-item">
+            <div><strong>Câu 2:</strong> Khi <b>m</b> đổi dấu từ dương sang âm, điểm cố định <b>A(0; 2)</b> thay đổi vai trò thế nào?</div>
+            <div class="quiz-options">
+              <button onclick="checkQuiz(2, true)">Từ Cực đại thành Cực tiểu</button>
+              <button onclick="checkQuiz(2, false)">Luôn là Điểm cực đại</button>
+            </div>
+            <div class="quiz-feedback" id="fb-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("graphCanvas");
+    const ctx = canvas.getContext("2d");
+    const mSlider = document.getElementById("mSlider");
+    const toggleTangent = document.getElementById("toggleTangent");
+    const toggleLocus = document.getElementById("toggleLocus");
+    const playBtn = document.getElementById("playBtn");
+
+    let currentM = 1.0;
+    let playInterval = null;
+    let playDir = 1;
+
+    // Làm tròn sạch số thực tránh lỗi dấu phẩy động JS
+    function cleanNum(n) {
+      const rounded = Math.round(n * 1000) / 1000;
+      return Object.is(rounded, -0) ? 0 : rounded;
+    }
+
+    // Hàm hỗ trợ render KaTeX an toàn
+    function renderMath(elementId, tex, fallbackText) {
+      const el = document.getElementById(elementId);
+      if (window.katex) {
+        katex.render(tex, el, { throwOnError: false, displayMode: false });
+      } else {
+        el.textContent = fallbackText || tex;
+      }
+    }
+
+    function setM(val) {
+      stopPlay();
+      currentM = cleanNum(val);
+      mSlider.value = currentM;
+      updateAll();
+    }
+
+    function togglePlay() {
+      if (playInterval) {
+        stopPlay();
+      } else {
+        playBtn.textContent = "⏸ Tạm dừng";
+        playBtn.classList.add("active-play");
+        playInterval = setInterval(() => {
+          let next = cleanNum(currentM + playDir * 0.05);
+          if (next >= 1.3) {
+            next = 1.3;
+            playDir = -1;
+          } else if (next <= -1.3) {
+            next = -1.3;
+            playDir = 1;
+          }
+          currentM = next;
+          mSlider.value = cleanNum(Math.round(currentM * 10) / 10);
+          updateAll();
+        }, 70);
+      }
+    }
+
+    function stopPlay() {
+      if (playInterval) {
+        clearInterval(playInterval);
+        playInterval = null;
+        playBtn.textContent = "▶ Chạy tự động";
+        playBtn.classList.remove("active-play");
+      }
+    }
+
+    function checkQuiz(qId, isCorrect) {
+      const fb = document.getElementById(`fb-${qId}`);
+      if (isCorrect) {
+        fb.style.color = "#059669";
+        fb.textContent = qId === 1
+          ? "Chính xác! Khi m = 0, y' = 3x² ≥ 0 nên hàm số đồng biến trên ℝ và không có cực trị."
+          : "Chính xác! Khi m > 0 thì x_CĐ = 0; khi m < 0 thì x_CT = 0.";
+      } else {
+        fb.style.color = "#dc2626";
+        fb.textContent = "Chưa đúng. Hãy kéo thanh trượt m và quan sát bảng kết luận phía trên nhé!";
+      }
+    }
+
+    function updateMathPanel(m) {
+      document.getElementById("mValueBadge").textContent = `m = ${m}`;
+
+      const b = cleanNum(-3 * m); // hệ số của x^2
+      const c = cleanNum(-6 * m); // hệ số của x trong đạo hàm
+      const twoM = cleanNum(2 * m);
+      const yMoving = cleanNum(2 - 4 * Math.pow(m, 3));
+
+      // 1. Định dạng hàm số y
+      let funcTex = "y = x^3 + 2";
+      if (b !== 0) {
+        const sign = b > 0 ? "+" : "-";
+        const absB = Math.abs(b) === 1 ? "" : Math.abs(b);
+        funcTex = `y = x^3 ${sign} ${absB}x^2 + 2`;
+      }
+      renderMath("tex-func", funcTex);
+
+      // 2. Định dạng đạo hàm y'
+      let derivTex = "y' = 3x^2";
+      let rootsTex = "y' = 0 \\Leftrightarrow x = 0 \\text{ (nghiệm kép)}";
+      if (c !== 0) {
+        const signC = c > 0 ? "+" : "-";
+        const absC = Math.abs(c) === 1 ? "" : Math.abs(c);
+        const factorSign = twoM > 0 ? "-" : "+";
+        const absTwoM = Math.abs(twoM);
+        derivTex = `y' = 3x^2 ${signC} ${absC}x = 3x(x ${factorSign} ${absTwoM})`;
+        rootsTex = `y' = 0 \\Leftrightarrow \\left[\\begin{array}{l} x = 0 \\\\ x = ${twoM} \\end{array}\\right.`;
+      }
+      renderMath("tex-deriv", derivTex);
+      renderMath("tex-roots", rootsTex);
+
+      // 3. Kết luận cực trị và khoảng đơn điệu
+      const extContainer = document.getElementById("extremaContainer");
+      if (m === 0) {
+        extContainer.innerHTML = `
+          <div class="ext-card ext-none">
+            <strong>Không có điểm cực trị</strong><br/>
+            <span id="tex-inflection"></span>
+          </div>`;
+        renderMath("tex-inflection", "\\text{Đồ thị nhận } I(0; 2) \\text{ làm điểm uốn.}");
+        renderMath("tex-monotonic", "\\text{Đồng biến trên } (-\\infty; +\\infty).");
+      } else if (m > 0) {
+        extContainer.innerHTML = `
+          <div class="ext-card ext-max">
+            <strong>Điểm Cực đại (CĐ)</strong><br/>
+            <span id="tex-cd"></span>
+          </div>
+          <div class="ext-card ext-min">
+            <strong>Điểm Cực tiểu (CT)</strong><br/>
+            <span id="tex-ct"></span>
+          </div>`;
+        renderMath("tex-cd", `A(0; 2)`);
+        renderMath("tex-ct", `B(${twoM}; ${yMoving})`);
+        renderMath(
+          "tex-monotonic",
+          `\\text{ĐB: } (-\\infty; 0) \\text{ và } (${twoM}; +\\infty) \\quad | \\quad \\text{NB: } (0; ${twoM})`
+        );
+      } else {
+        extContainer.innerHTML = `
+          <div class="ext-card ext-max">
+            <strong>Điểm Cực đại (CĐ)</strong><br/>
+            <span id="tex-cd"></span>
+          </div>
+          <div class="ext-card ext-min">
+            <strong>Điểm Cực tiểu (CT)</strong><br/>
+            <span id="tex-ct"></span>
+          </div>`;
+        renderMath("tex-cd", `B(${twoM}; ${yMoving})`);
+        renderMath("tex-ct", `A(0; 2)`);
+        renderMath(
+          "tex-monotonic",
+          `\\text{ĐB: } (-\\infty; ${twoM}) \\text{ và } (0; +\\infty) \\quad | \\quad \\text{NB: } (${twoM}; 0)`
+        );
+      }
+    }
+
+    function drawGraph(m) {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const W = rect.width;
+      const H = rect.height;
+      ctx.clearRect(0, 0, W, H);
+
+      // Hệ tọa độ toán học: x in [-4.5, 4.5], y in [-8, 10]
+      const xMin = -4.5, xMax = 4.5;
+      const yMin = -8, yMax = 10;
+
+      const toPxX = (x) => ((x - xMin) / (xMax - xMin)) * W;
+      const toPxY = (y) => H - ((y - yMin) / (yMax - yMin)) * H;
+
+      // 1. Vẽ lưới tọa độ
+      ctx.strokeStyle = "#f1f5f9";
+      ctx.lineWidth = 1;
+      for (let gx = Math.ceil(xMin); gx <= Math.floor(xMax); gx++) {
+        const px = toPxX(gx);
+        ctx.beginPath();
+        ctx.moveTo(px, 0);
+        ctx.lineTo(px, H);
+        ctx.stroke();
+      }
+      for (let gy = Math.ceil(yMin); gy <= Math.floor(yMax); gy++) {
+        const py = toPxY(gy);
+        ctx.beginPath();
+        ctx.moveTo(0, py);
+        ctx.lineTo(W, py);
+        ctx.stroke();
+      }
+
+      // 2. Vẽ trục Ox, Oy và chia vạch số
+      const originX = toPxX(0);
+      const originY = toPxY(0);
+      ctx.strokeStyle = "#475569";
+      ctx.lineWidth = 1.6;
+
+      // Trục Ox
+      ctx.beginPath();
+      ctx.moveTo(0, originY);
+      ctx.lineTo(W, originY);
+      ctx.stroke();
+      // Mũi tên Ox
+      ctx.beginPath();
+      ctx.moveTo(W - 8, originY - 4);
+      ctx.lineTo(W, originY);
+      ctx.lineTo(W - 8, originY + 4);
+      ctx.stroke();
+
+      // Trục Oy
+      ctx.beginPath();
+      ctx.moveTo(originX, H);
+      ctx.lineTo(originX, 0);
+      ctx.stroke();
+      // Mũi tên Oy
+      ctx.beginPath();
+      ctx.moveTo(originX - 4, 8);
+      ctx.lineTo(originX, 0);
+      ctx.lineTo(originX + 4, 8);
+      ctx.stroke();
+
+      ctx.fillStyle = "#475569";
+      ctx.font = "12px Segoe UI, sans-serif";
+      ctx.fillText("x", W - 14, originY - 8);
+      ctx.fillText("y", originX + 8, 14);
+      ctx.fillText("O", originX - 14, originY + 15);
+
+      for (let gx = -4; gx <= 4; gx++) {
+        if (gx === 0) continue;
+        const px = toPxX(gx);
+        ctx.beginPath();
+        ctx.moveTo(px, originY - 3);
+        ctx.lineTo(px, originY + 3);
+        ctx.stroke();
+        ctx.fillText(gx, px - 4, originY + 16);
+      }
+      for (let gy = -6; gy <= 8; gy += 2) {
+        if (gy === 0) continue;
+        const py = toPxY(gy);
+        ctx.beginPath();
+        ctx.moveTo(originX - 3, py);
+        ctx.lineTo(originX + 3, py);
+        ctx.stroke();
+        ctx.fillText(gy, originX - 20, py + 4);
+      }
+
+      // 3. Nếu bật quỹ tích điểm cực trị: y = -0.5x^3 + 2
+      if (toggleLocus.checked) {
+        ctx.save();
+        ctx.strokeStyle = "#9333ea";
+        ctx.setLineDash([6, 5]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 300; i++) {
+          const x = xMin + (i / 300) * (xMax - xMin);
+          const y = -0.5 * Math.pow(x, 3) + 2;
+          const px = toPxX(x);
+          const py = toPxY(y);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.fillStyle = "#9333ea";
+        ctx.font = "bold 12px Segoe UI, sans-serif";
+        ctx.fillText("Quỹ tích Cực trị: y = -0.5x³ + 2", toPxX(-3.9), toPxY(8.5));
+        ctx.restore();
+      }
+
+      // 4. Vẽ đồ thị hàm số y = x^3 - 3mx^2 + 2
+      ctx.strokeStyle = "#1d4ed8";
+      ctx.lineWidth = 2.8;
+      ctx.beginPath();
+      const steps = 500;
+      for (let i = 0; i <= steps; i++) {
+        const x = xMin + (i / steps) * (xMax - xMin);
+        const y = Math.pow(x, 3) - 3 * m * Math.pow(x, 2) + 2;
+        const px = toPxX(x);
+        const py = toPxY(y);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // 5. Vẽ các điểm cực trị & tiếp tuyến nằm ngang
+      const drawPoint = (x, y, color, label) => {
+        const px = toPxX(x);
+        const py = toPxY(y);
+
+        // Đường gióng nét đứt xuống trục tọa độ
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(px, originY);
+        ctx.lineTo(px, py);
+        ctx.lineTo(originX, py);
+        ctx.stroke();
+
+        // Tiếp tuyến nằm ngang y' = 0
+        if (toggleTangent.checked) {
+          ctx.setLineDash([]);
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(px - 38, py);
+          ctx.lineTo(px + 38, py);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Chấm tròn điểm cực trị
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Nhãn điểm
+        ctx.fillStyle = color;
+        ctx.font = "bold 12.5px Segoe UI, sans-serif";
+        ctx.fillText(label, px + 9, py - 8);
+      };
+
+      const twoM = cleanNum(2 * m);
+      const yMoving = cleanNum(2 - 4 * Math.pow(m, 3));
+
+      if (m === 0) {
+        drawPoint(0, 2, "#d97706", "I(0; 2) - Điểm uốn");
+      } else if (m > 0) {
+        drawPoint(0, 2, "#dc2626", "CĐ (0; 2)");
+        drawPoint(twoM, yMoving, "#059669", `CT (${twoM}; ${yMoving})`);
+      } else {
+        drawPoint(twoM, yMoving, "#dc2626", `CĐ (${twoM}; ${yMoving})`);
+        drawPoint(0, 2, "#059669", "CT (0; 2)");
+      }
+    }
+
+    function updateAll() {
+      updateMathPanel(currentM);
+      drawGraph(currentM);
+    }
+
+    mSlider.addEventListener("input", (e) => {
+      stopPlay();
+      currentM = cleanNum(parseFloat(e.target.value));
+      updateAll();
+    });
+
+    toggleTangent.addEventListener("change", () => drawGraph(currentM));
+    toggleLocus.addEventListener("change", () => drawGraph(currentM));
+    window.addEventListener("resize", () => drawGraph(currentM));
+
+    window.addEventListener("DOMContentLoaded", () => {
+      renderMath("header-formula", "y = x^3 - 3mx^2 + 2");
+      updateAll();
+    });
+  </script>
+</body>
+</html>
