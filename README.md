@@ -6,7 +6,7 @@
 
 > **Đề tài Sáng kiến Kinh nghiệm:** *"Ứng dụng hệ sinh thái Gemini AI – Manim – LaTeX thiết kế học liệu trực quan động nhằm phát triển năng lực toán học cho học sinh lớp 12 trong dạy học chương Ứng dụng đạo hàm."*
 >
-> **Tác giả:** [Họ và tên Giáo viên] — Trường THPT [Tên Trường]
+> **Tác giả:** Huỳnh Thanh Tuấn - Vũ Tuấn Việt — Trường THPT Quốc Học Quy Nhơn
 
 ---
 
